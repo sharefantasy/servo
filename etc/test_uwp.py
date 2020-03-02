@@ -36,6 +36,7 @@ def run_powershell_cmd(cmd):
         check_call(['powershell.exe', '-NoProfile', '-Command', cmd])
     except CalledProcessError:
         print "ERROR: PowerShell command failed"
+        check_call(['powershell.exe', '-NoProfile', '-Command', 'Get-Appxlog'])
         exit(1)
 
 
