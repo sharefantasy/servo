@@ -70,8 +70,8 @@ run_powershell_cmd(uninstall_cmd)
 
 
 run_powershell_cmd('(Get-AuthenticodeSignature -FilePath ' + appx_file + ').StatusMessage')
-c1 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowDevelopmentWithoutDevLicense"'
-c2 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowAllTrustedApps"'
+c1 = 'reg query "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock" /v "AllowDevelopmentWithoutDevLicense"'
+c2 = 'reg query "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock" /v "AllowAllTrustedApps"'
 run_powershell_cmd_dont_fail(c1)
 run_powershell_cmd_dont_fail(c2)
 run_powershell_cmd('Add-AppxPackage -Path ' + appx_file)
