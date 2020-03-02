@@ -60,7 +60,7 @@ uninstall_cmd = 'Get-AppxPackage ' + app_name + '| Remove-AppxPackage'
 # Uninstalling first. Just in case.
 run_powershell_cmd(uninstall_cmd)
 run_powershell_cmd("pwd")
-run_powershell_cmd("ls support\\hololens\\AppPackages\\ServoApp\\ServoApp_1.0.0.0_test\\")
+run_powershell_cmd("ls support\\hololens\\AppPackages\\ServoApp\\ServoApp_1.0.0.0_Debug_Test\\")
 run_powershell_cmd('Add-AppxPackage -Path ' + appx_file)
 # Allow app to connect to localhost
 checknetisolation = 'checknetisolation loopbackexempt {} -n="$(Get-AppxPackage -Name ' + app_name + ').Name"'
