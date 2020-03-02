@@ -21,8 +21,9 @@ from threading import Thread
 
 # Files
 app_name = 'MozillaFoundation.FirefoxReality'
-path = '.\\support\\hololens\\AppPackages\\ServoApp\\ServoApp_1.0.0.0_Debug_Test\\'
-appx_file = path + 'ServoApp_1.0.0.0_x64_Debug.msixbundle'
+
+path = 'support\\hololens\\AppPackages\\ServoApp\\ServoApp_1.0.0.0_Debug_Test\\'
+appx_file = os.getcwd() + '\\' + path + 'ServoApp_1.0.0.0_x64_Debug.msixbundle'
 
 if not os.path.isfile(appx_file):
     print "Can't find ServoApp package (was `mach package` run?)"
@@ -58,6 +59,8 @@ uninstall_cmd = 'Get-AppxPackage ' + app_name + '| Remove-AppxPackage'
 # Installing app
 # Uninstalling first. Just in case.
 run_powershell_cmd(uninstall_cmd)
+run_powershell_cmd("pwd")
+run_powershell_cmd("ls support\\hololens\\AppPackages\\ServoApp\\ServoApp_1.0.0.0_test\\")
 run_powershell_cmd('Add-AppxPackage -Path ' + appx_file)
 # Allow app to connect to localhost
 checknetisolation = 'checknetisolation loopbackexempt {} -n="$(Get-AppxPackage -Name ' + app_name + ').Name"'
