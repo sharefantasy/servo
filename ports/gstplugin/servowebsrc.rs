@@ -83,25 +83,17 @@ use sparkle::gl;
 use sparkle::gl::types::GLuint;
 use sparkle::gl::Gl;
 
-use surfman::connection::Connection as ConnectionAPI;
-use surfman::device::Device as DeviceAPI;
+use surfman::Connection;
+use surfman::Context;
 use surfman::ContextAttributeFlags;
 use surfman::ContextAttributes;
+use surfman::Device;
 use surfman::GLVersion;
 use surfman::SurfaceType;
+use surfman::platform::default::connection::NativeConnection;
+use surfman::platform::default::context::NativeContext;
 use surfman_chains::SwapChain;
 use surfman_chains_api::SwapChainAPI;
-
-// For the moment, we only support wayland and cgl.
-#[cfg(target_os = "macos")]
-use surfman::platform::macos::cgl::device::Device;
-#[cfg(all(unix, not(target_os = "macos")))]
-use surfman::platform::unix::wayland::device::Device;
-
-type Context = <Device as DeviceAPI>::Context;
-type Connection = <Device as DeviceAPI>::Connection;
-type NativeContext = <Device as DeviceAPI>::NativeContext;
-type NativeConnection = <Connection as ConnectionAPI>::NativeConnection;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
