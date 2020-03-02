@@ -83,6 +83,8 @@ use sparkle::gl;
 use sparkle::gl::types::GLuint;
 use sparkle::gl::Gl;
 
+use surfman::platform::default::connection::NativeConnection;
+use surfman::platform::default::context::NativeContext;
 use surfman::Connection;
 use surfman::Context;
 use surfman::ContextAttributeFlags;
@@ -90,8 +92,6 @@ use surfman::ContextAttributes;
 use surfman::Device;
 use surfman::GLVersion;
 use surfman::SurfaceType;
-use surfman::platform::default::connection::NativeConnection;
-use surfman::platform::default::context::NativeContext;
 use surfman_chains::SwapChain;
 use surfman_chains_api::SwapChainAPI;
 
