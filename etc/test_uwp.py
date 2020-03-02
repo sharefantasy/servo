@@ -60,7 +60,13 @@ uninstall_cmd = 'Get-AppxPackage ' + app_name + '| Remove-AppxPackage'
 # Installing app
 # Uninstalling first. Just in case.
 run_powershell_cmd(uninstall_cmd)
-run_powershell_cmd('Get-AuthenticodeSignature -FilePath ' + appx_file)
+
+
+c1 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowDevelopmentWithoutDevLicense"'
+c2 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowAllTrustedApps"'
+run_powershell_cmd(c1)
+run_powershell_cmd(c2)
+run_powershell_cmd('(Get-AuthenticodeSignature -FilePath ' + appx_file + ').StatusMessage')
 run_powershell_cmd('Add-AppxPackage -Path ' + appx_file)
 # Allow app to connect to localhost
 checknetisolation = 'checknetisolation loopbackexempt {} -n="$(Get-AppxPackage -Name ' + app_name + ').Name"'
