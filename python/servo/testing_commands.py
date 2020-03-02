@@ -451,7 +451,7 @@ class MachCommands(CommandBase):
         os.environ['RAYON_RS_NUM_CPUS'] = "2"
 
         # TODO: allow running WPT with a GPU
-        os.environ["RUST_BACKTRACE"] = "1"
+        os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
 
         os.environ["RUST_BACKTRACE"] = "1"
         kwargs["debug"] = not kwargs["release"]
