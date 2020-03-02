@@ -25,6 +25,7 @@ use servo::compositing::windowing::{EmbedderCoordinates, WindowMethods};
 use servo::embedder_traits::Cursor;
 use servo::script_traits::{TouchEventType, WheelMode, WheelDelta};
 use servo::servo_config::opts;
+use servo::servo_config::pref;
 use servo::servo_geometry::DeviceIndependentPixel;
 use servo::style_traits::DevicePixel;
 use servo::webrender_api::ScrollLocation;
@@ -579,18 +580,67 @@ impl WindowMethods for Window {
     }
 
     fn get_gl_context(&self) -> PlayerGLContext {
-        // TODO: fix this
-        PlayerGLContext::Unknown
+        if !pref!(media.glvideo.enabled) {
+            return PlayerGLContext::Unknown;
+        }
+
+        #[allow(unused_variables)]
+        let native_context = self.webrender_surfman.native_context();
+
+        #[cfg(target_os = "windows")]
+        return PlayerGLContext::Egl(native_context.egl_context as usize);
+
+        #[cfg(target_os = "linux")]
+        return match native_context {
+            NativeContext::Primary(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
+            NativeContext::Alt(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
+        };
+
+        // @TODO(victor): https://github.com/servo/media/pull/315
+        #[cfg(target_os = "macos")]
+        #[allow(unreachable_code)]
+        return unimplemented!();
+
+        #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+        return unimplemented!();
     }
 
     fn get_native_display(&self) -> NativeDisplay {
-        // TODO: fix this
-        NativeDisplay::Unknown
+        if !pref!(media.glvideo.enabled) {
+            return NativeDisplay::Unknown;
+        }
+
+        #[allow(unused_variables)]
+        let native_connection = self.webrender_surfman.connection().native_connection();
+
+        #[cfg(target_os = "windows")]
+        return NativeDisplay::Egl(native_connection.0 as usize);
+
+        #[cfg(target_os = "linux")]
+        return match native_connection {
+            NativeContext::Primary(native_connection) => NativeDisplay::Egl(native_connection.0 as usize),
+            NativeContext::Alt(native_connection) => NativeDisplay::Egl(native_connection.egl_display as usize),
+        };
+
+        // @TODO(victor): https://github.com/servo/media/pull/315
+        #[cfg(target_os = "macos")]
+        xs#[allow(unreachable_code)]
+        return unimplemented!();
+
+        #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+        return unimplemented!();
     }
 
     fn get_gl_api(&self) -> GlApi {
-        // TODO: fix this
-        GlApi::None
+        let api = self.webrender_surfman.connection().gl_api();
+        let attributes = self.webrender_surfman.context_attributes();
+        let GLVersion { major, minor } = attributes.version;
+        match api {
+            GLApi::GL if major >= 3 && minor >= 2 => GlApi::OpenGL3,
+            GLApi::GL => GlApi::OpenGL,
+            GLApi::GLES if major > 1 => GlApi::Gles2,
+            GLApi::GLES => GlApi::Gles1,
+        }
     }
 }
 

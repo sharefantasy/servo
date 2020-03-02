@@ -10,6 +10,8 @@ use std::collections::HashMap;
 use std::ffi::c_void;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
+
+use surfman::platform::default::context::NativeContext;
 use surfman::Adapter;
 use surfman::Connection;
 use surfman::Context;
@@ -287,6 +289,19 @@ impl WebrenderSurfman {
     pub fn adapter(&self) -> Adapter {
         let ref device = self.0.device.borrow();
         device.adapter()
+    }
+
+    pub fn native_context(&self) -> NativeContext {
+        let ref device = self.0.device.borrow();
+        let ref context = self.0.context.borrow();
+        device.native_context(context)
+    }
+
+    pub fn context_attributes(&self) -> ContextAttributes {
+        let ref device = self.0.device.borrow();
+        let ref context = self.0.context.borrow();
+        let ref descriptor = device.context_descriptor(context);
+        device.context_descriptor_attributes(descriptor)
     }
 
     pub fn context_surface_info(&self) -> Result<Option<SurfaceInfo>, Error> {
