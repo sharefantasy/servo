@@ -29,6 +29,13 @@ if not os.path.isfile(appx_file):
     print "Can't find ServoApp package (was `mach package` run?)"
     exit(1)
 
+def run_powershell_cmd_dont_fail(cmd):
+    try:
+        print "Running PowerShell command: ", cmd
+        check_call(['powershell.exe', '-NoProfile', '-Command', cmd])
+    except CalledProcessError:
+        print "ERROR: PowerShell command failed"
+        check_call(['powershell.exe', '-NoProfile', '-Command', 'Get-Appxlog'])
 
 def run_powershell_cmd(cmd):
     try:
@@ -62,11 +69,11 @@ uninstall_cmd = 'Get-AppxPackage ' + app_name + '| Remove-AppxPackage'
 run_powershell_cmd(uninstall_cmd)
 
 
+run_powershell_cmd('(Get-AuthenticodeSignature -FilePath ' + appx_file + ').StatusMessage')
 c1 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowDevelopmentWithoutDevLicense"'
 c2 = 'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" /v "AllowAllTrustedApps"'
-run_powershell_cmd(c1)
-run_powershell_cmd(c2)
-run_powershell_cmd('(Get-AuthenticodeSignature -FilePath ' + appx_file + ').StatusMessage')
+run_powershell_cmd_dont_fail(c1)
+run_powershell_cmd_dont_fail(c2)
 run_powershell_cmd('Add-AppxPackage -Path ' + appx_file)
 # Allow app to connect to localhost
 checknetisolation = 'checknetisolation loopbackexempt {} -n="$(Get-AppxPackage -Name ' + app_name + ').Name"'
