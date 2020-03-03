@@ -35,6 +35,8 @@ use servo_media::player::context::{GlApi, GlContext as PlayerGLContext, NativeDi
 use std::cell::{Cell, RefCell};
 use std::mem;
 use std::rc::Rc;
+use surfman::connection::Connection as ConnectionAPI;
+use surfman::device::Device as DeviceAPI;
 use surfman::Connection;
 use surfman::ContextAttributes;
 use surfman::ContextAttributeFlags;
@@ -45,6 +47,9 @@ use surfman::NativeWidget;
 use surfman::SurfaceType;
 #[cfg(target_os = "windows")]
 use winapi;
+
+type NativeConnection = <Connection as ConnectionAPI>::NativeConnection;
+type NativeContext = <Device as DeviceAPI>::NativeContext;
 
 #[cfg(target_os = "macos")]
 fn builder_with_platform_options(mut builder: winit::WindowBuilder) -> winit::WindowBuilder {
@@ -592,8 +597,8 @@ impl WindowMethods for Window {
 
         #[cfg(target_os = "linux")]
         return match native_context {
-            NativeContext::Primary(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
-            NativeContext::Alt(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
+            NativeContext::Default(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
+            NativeContext::Alternate(native_context) => PlayerGLContext::Egl(native_context.egl_context as usize),
         };
 
         // @TODO(victor): https://github.com/servo/media/pull/315
@@ -618,13 +623,13 @@ impl WindowMethods for Window {
 
         #[cfg(target_os = "linux")]
         return match native_connection {
-            NativeContext::Primary(native_connection) => NativeDisplay::Egl(native_connection.0 as usize),
-            NativeContext::Alt(native_connection) => NativeDisplay::Egl(native_connection.egl_display as usize),
+            NativeConnection::Default(conn) => NativeDisplay::Egl(conn.0 as usize),
+            NativeConnection::Alternate(conn) => NativeDisplay::Egl(conn.egl_display as usize),
         };
 
         // @TODO(victor): https://github.com/servo/media/pull/315
         #[cfg(target_os = "macos")]
-        xs#[allow(unreachable_code)]
+        #[allow(unreachable_code)]
         return unimplemented!();
 
         #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]

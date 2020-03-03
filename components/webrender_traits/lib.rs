@@ -5,13 +5,13 @@
 #![deny(unsafe_code)]
 
 use euclid::default::Size2D;
+
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ffi::c_void;
 use std::rc::Rc;
 use std::sync::{Arc, Mutex};
-
-use surfman::platform::default::context::NativeContext;
+use surfman::device::Device as DeviceAPI;
 use surfman::Adapter;
 use surfman::Connection;
 use surfman::Context;
@@ -25,7 +25,10 @@ use surfman::SurfaceInfo;
 use surfman::SurfaceTexture;
 use surfman::SurfaceType;
 use surfman_chains::SwapChain;
+
 use webrender_api::units::TexelRect;
+
+type NativeContext = <Device as DeviceAPI>::NativeContext;
 
 /// This trait is used as a bridge between the different GL clients
 /// in Servo that handles WebRender ExternalImages and the WebRender
