@@ -69,7 +69,8 @@ uninstall_cmd = 'Get-AppxPackage ' + app_name + '| Remove-AppxPackage'
 run_powershell_cmd(uninstall_cmd)
 
 
-run_powershell_cmd('(Get-AuthenticodeSignature -FilePath ' + appx_file + ').StatusMessage')
+run_powershell_cmd_dont_fail('dir cert: -Recurse | Where-Object {$_.Issuer -eq "CN=Allizom"}')
+run_powershell_cmd_dont_fail('Get-AuthenticodeSignature -FilePath ' + appx_file + ' | Select-Object *')
 c1 = 'reg query "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock" /v "AllowDevelopmentWithoutDevLicense"'
 c2 = 'reg query "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock" /v "AllowAllTrustedApps"'
 run_powershell_cmd_dont_fail(c1)
