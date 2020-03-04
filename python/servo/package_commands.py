@@ -779,8 +779,10 @@ def setup_uwp_signing(ms_app_store, fail_miss_cert):
     publisher = manifest.getroot().find(namespace + "Identity").attrib["Publisher"]
     # Powershell command that lists all certificates for publisher
     print("DEBUG CERT")
-    cmd = 'dir cert: -Recurse | Where-Object {$_.Issuer -eq "' + publisher + '"}'
-    print(run_powershell_cmd(cmd))
+    print(run_powershell_cmd('dir cert: -Recurse | Where-Object {$_.Issuer -eq "' + publisher + '"}'))
+    print(run_powershell_cmd('$PSVersionTable'))
+    print(run_powershell_cmd('Get-ChildItem Cert:\\CurrentUser\\My -CodeSigningCert |where{ $_.NotAfter -gt [datetime]::Now}'))
+    print(run_powershell_cmd('dir cert:currentuser\my\ -CodeSigningCert | Select-Object *'))
     cmd = '(dir cert: -Recurse | Where-Object {$_.Issuer -eq "' + publisher + '"}).Thumbprint'
     certs = list(set(run_powershell_cmd(cmd).splitlines()))
     if not certs and fail_miss_cert:
