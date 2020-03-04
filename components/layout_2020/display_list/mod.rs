@@ -13,6 +13,7 @@ use gfx::text::glyph::GlyphStore;
 use mitochondria::OnceCell;
 use net_traits::image_cache::UsePlaceholder;
 use std::sync::Arc;
+use style::computed_values::text_decoration_line::T as ComputedTextDecorationLine;
 use style::computed_values::text_decoration_style::T as ComputedTextDecorationStyle;
 use style::dom::OpaqueNode;
 use style::properties::ComputedValues;
@@ -132,14 +133,11 @@ impl Fragment {
         common.hit_info = hit_info(&fragment.parent_style, fragment.tag, Cursor::Text);
 
         let color = fragment.parent_style.clone_color();
-        let text_decorations = fragment
-            .parent_style
-            .get_inherited_text()
-            .text_decorations_in_effect;
+        let text_decoration_line = fragment.parent_style.clone_text_decoration_line();
         let font_metrics = &fragment.font_metrics;
 
         // Underline.
-        if text_decorations.underline {
+        if text_decoration_line == ComputedTextDecorationLine::UNDERLINE {
             let mut rect = rect;
             rect.origin.y = rect.origin.y + font_metrics.ascent - font_metrics.underline_offset;
             rect.size.height = font_metrics.underline_size;
@@ -147,7 +145,7 @@ impl Fragment {
         }
 
         // Overline.
-        if text_decorations.overline {
+        if text_decoration_line == ComputedTextDecorationLine::OVERLINE {
             let mut rect = rect;
             rect.size.height = font_metrics.underline_size;
             self.build_display_list_for_text_decoration(fragment, builder, &rect, color);
@@ -164,7 +162,7 @@ impl Fragment {
         );
 
         // Line-through.
-        if text_decorations.line_through {
+        if text_decoration_line == ComputedTextDecorationLine::LINE_THROUGH {
             let mut rect = rect;
             rect.origin.y = rect.origin.y + font_metrics.ascent - font_metrics.strikeout_offset;
             // XXX(ferjm) This does not work on MacOS #942
